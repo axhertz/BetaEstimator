@@ -42,23 +42,18 @@ def getBasicEstimate(query_part,df_sample):
 
 
 
-
 if __name__ == "__main__":
 
-	sample_size = "1k" #"1k"
-
+	sample_size = "1k" #"1per"
+	
 	df_sample = pandas.read_csv('Data/forest_sample_{}.csv'.format(sample_size), index_col = 0)
 	query_file = open("Workload/forest_qu7.txt", "r") # column lower upper ... -> attribute BETWEEN lower AND upper AND ...	
 	table_size = 581012 #weather: 3475109		
 
 	for num,line in enumerate(query_file.readlines()):
-		if num > 10: break
 		query_string = line.split(" ")
 		avi_est, ebo_est, minsel_est, samplePess_est, sampleOpt_est = getBasicEstimate(query_string, df_sample)
 		print('{:<15}  {:<15}  {:<20}  {:<20}  {:<20}  {:<0}'.format("query num: "+ str(num), "AVI: "+ str(int(avi_est)), "ExpBackoff: "+ str(int(ebo_est)),\
 			 "Min Sel: "+ str(int(minsel_est)), "Pessimistic: "+ str(int(samplePess_est)),"Optimistic: "+ str(int(sampleOpt_est))))
-
-		#print("query num:", num, "\tAVI:", int(avi_est),"\t", "ExpBackoff:",int(ebo_est), "\t", "Min Sel:",int(minsel_est),
-		#	  "\t","Pessimistic", int(samplePess_est), "\t","Optimistic", int(sampleOpt_est))
 
 	query_file.close()
