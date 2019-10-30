@@ -118,7 +118,7 @@ int main(){
 	// read prepared parameters (e.g. using the betaEstimator.py)
 	std::ifstream infile("parameters_for_1per.txt");
 	// write out estimated selectivity
-	std::ofstream outfile("results_for_1per.txt");
+	std::ofstream outfile("results.txt");
 	std::string line;
 	int query_num;
 	int query_num_before = -1;
