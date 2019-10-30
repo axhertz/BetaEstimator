@@ -124,8 +124,7 @@ int main(){
 	int query_num_before = -1;
 	double pA, pB, k_AB, k_AnotB, m_B, m_notB, partialSel;
 	double completion_time = 0;
-	double duration = 0;
-	double cnt = 0;
+	double counter = 0;
 
 	while (std::getline(infile, line))
 	{
@@ -135,18 +134,16 @@ int main(){
 	partialSel = partialEstimate(pA,pB,k_AB,k_AnotB,m_B,m_notB);
 	auto t2 = std::chrono::high_resolution_clock::now();
 	if(query_num == query_num_before){
-		duration =  duration+ std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 		outfile<< "query_num: " << query_num <<" second phase result:  "<< partialSel << "\n"; 	
 	}
 	else{
-		duration =  std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 		outfile<< "query_num: " << query_num <<" first  phase result:  "<< partialSel << "\n"; 
-		cnt++;
+		counter++;
 	}
 	completion_time += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() ;
 	query_num_before = query_num;
 	}
-	std::cout<<"average time: " << completion_time/cnt<<" [µs]\n";
+	std::cout<<"average time: " << completion_time/counter<<" [µs]\n";
 	std::cout<<"results have been written to [\"results.txt\"] \n";
 	outfile.close();
 
