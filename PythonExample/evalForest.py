@@ -24,7 +24,7 @@ if __name__ == "__main__":
 		query_string = line.split(" ")
 		# use pre-computed enumeration or call enumerator.strategy(query_string, df_sample)
 		plan = plan_all_queries[query_num] 
-		selectivity, qualifying_tuples =  betaEstimator.getSelectivityEstimate(plan, query_string, df_sample)
+		selectivity, qualifying_tuples =  betaEstimator.getSelectivityEstimate(plan, query_string, df_sample, query_num)
 		print('{:<20}  {:<35}  {:<0}'.format("query num: "+ str(query_num+1), "estimated cardinality: {0:.3f}".format(selectivity*table_size),\
 			 "qualifying tuples: "+str(qualifying_tuples)))
 

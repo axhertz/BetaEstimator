@@ -10,7 +10,7 @@ import sys
 import pandas
 
 
-def partialEstimate(pA, pB, bvResult, bvInput, sampleSize):
+def partialEstimate(pA, pB, bvResult, bvInput, sampleSize,query_num):
 
 	def target_func_AB(z_AB):
 		if (z_AB < 0 or z_AB> 1 or (pA-z_AB*pB)/(1-pB) < 0 or (pA-z_AB*pB)/(1-pB) > 1 ):
@@ -47,10 +47,11 @@ def partialEstimate(pA, pB, bvResult, bvInput, sampleSize):
 	m_B = np.count_nonzero(bvInput)
 	m_notB = np.count_nonzero(np.invert(bvInput))
 
-	""" #Uncomment to test C++ implementation!
-	with open("parameters.txt","a+") as file:
+	#Uncomment to test C++ implementation!
+	'''with open("parameters.txt","a+") as file:
 		file.write("{} {} {} {} {} {} {}\n".format(query_num, pA, pB, k_AB, k_AnotB, m_B,m_notB))
-	"""
+	'''
+	
 	if m_notB > 0:
 		zAB_lower = max((pA-(k_AnotB+1)*(1-pB)/m_notB)/pB,0)
 		zAB_upper = min((pA-(k_AnotB-1)*(1-pB)/m_notB)/pB,1)
@@ -90,7 +91,7 @@ def partialEstimate(pA, pB, bvResult, bvInput, sampleSize):
 		return pA * pB
 
 
-def getSelectivityEstimate(enumeratedPreds, query_part, df_sample):
+def getSelectivityEstimate(enumeratedPreds, query_part, df_sample, query_num):
 	sampleSize = len(df_sample)
 	selectivityEstimate = 1
 	bvResult = np.zeros(sampleSize,dtype = bool)
@@ -135,7 +136,7 @@ def getSelectivityEstimate(enumeratedPreds, query_part, df_sample):
 					elif np.count_nonzero(np.invert(residual) & testVec):
 						pB = np.count_nonzero(testVec)/sampleSize
 						pA = np.count_nonzero(residual)/sampleSize
-						return partialEstimate(pA, pB, residual, testVec,sampleSize)/pB * selectivityEstimate, 0
+						return partialEstimate(pA, pB, residual, testVec,sampleSize, query_num)/pB * selectivityEstimate, 0
 					visitedBv.pop()	
 				
 				return selectivityEstimate*len(residual_test)/sampleSize, 0 # fallback to AVI
@@ -156,7 +157,7 @@ def getSelectivityEstimate(enumeratedPreds, query_part, df_sample):
 			if not np.count_nonzero(bvResult) or not np.count_nonzero(bvInput) or np.count_nonzero(bvInput) == sampleSize: # use AVI
 				selectivityEstimate = selectivityEstimate*pB 
 			else:
-				selectivityEstimate = partialEstimate(pA,pB, bvResult, bvInput, sampleSize)
+				selectivityEstimate = partialEstimate(pA,pB, bvResult, bvInput, sampleSize,query_num)
 
 		visitedPreds.append(predicate_num)
 		visitedBv.append(bvInput)
