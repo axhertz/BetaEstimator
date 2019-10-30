@@ -41,7 +41,6 @@ def getBasicEstimate(query_part,df_sample):
 	return avi_est, ebo_est, minsel_est, samplePess_est, sampleOpt_est
 
 
-
 if __name__ == "__main__":
 
 	sample_size = "1k" #"1per"

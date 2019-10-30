@@ -39,7 +39,7 @@ def partialEstimate(pA, pB, bvResult, bvInput, sampleSize):
 
 	def getShapeParams(k,m):
 		if k > 0: return k+1/3, m-k+1/3
-		elif m > 0: return 0.6345, m 
+		elif m > 0: return 0.634, m 
 		return 1,1
 
 	k_AB = np.count_nonzero(bvInput & bvResult)
