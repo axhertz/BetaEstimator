@@ -52,23 +52,13 @@ def partialEstimate(pA, pB, bvResult, bvInput, sampleSize,query_num):
 		file.write("{} {} {} {} {} {} {}\n".format(query_num, pA, pB, k_AB, k_AnotB, m_B,m_notB))
 	'''
 	
-	if m_notB > 0:
-		zAB_lower = max((pA-(k_AnotB+1)*(1-pB)/m_notB)/pB,0)
-		zAB_upper = min((pA-(k_AnotB-1)*(1-pB)/m_notB)/pB,1)
-	else:
-		zAB_lower = max((pA-(1-pB))/pB,0)
-		zAB_upper = min(pA/pB,1)
-
-	if m_B > 0:
-		zAnotB_lower = max((pA-(k_AB+1)*pB/m_B)/(1-pB),0)
-		zAnotB_upper = min((pA-(k_AB-1)*pB/m_B)/(1-pB),1)
-	else:
-		zAnotB_lower = max((pA-pB)/(1-pB),0)
-		zAnotB_upper = min(pA/(1-pB),1)
+	zAnotB_lower = max((k_AnotB-1)/m_notB,0)
+	zAnotB_upper = min((k_AnotB+1)/m_notB,1)
+	zAB_lower = max((k_AB-1)/m_B,0)
+	zAB_upper = min((k_AB+1)/m_B,1)
 
 	a1, b1 = getShapeParams(k_AB,m_B)
 	a2, b2 = getShapeParams(k_AnotB, m_notB)
-
 
 	try: 
 		if zAB_upper - zAB_lower < zAnotB_upper - zAnotB_lower:
