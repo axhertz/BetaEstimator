@@ -15,17 +15,16 @@
 
 struct targetFunc_AB{
 
-	targetFunc_AB(double pA_, double pB_, double a1, double b1, double a2, double b2):
-	pA(pA_), pB(pB_), beta_dist_AB(boost::math::beta_distribution<double>(a1, b1)),
-	beta_dist_AnotB(boost::math::beta_distribution<double>(a2,b2)){}
+	targetFunc_AB(double pA_, double pB_, double a1_, double b1_, double a2_, double b2_):
+	pA(pA_), pB(pB_),a1(a1_), b1(b1_),a2(a2_), b2(b2_) {}
 
 	double operator()(double const& z_AB){
 		if (z_AB < 0 || z_AB> 1 || (pA-z_AB*pB)/(1-pB) < 0 || (pA-z_AB*pB)/(1-pB) > 1 ){
 			return std::numeric_limits<double>::max();
 		}
 
-		double cdf_AB = boost::math::cdf(beta_dist_AB, z_AB);
-		double cdf_AnotB = boost::math::cdf(beta_dist_AnotB,(pA-z_AB*pB)/(1-pB));
+		cdf_AB = boost::math::ibetac(a1,b1, z_AB);
+		cdf_AnotB = boost::math::ibetac(a2,b2, (pA-z_AB*pB)/(1-pB));
 
 		if(cdf_AnotB == 0 || cdf_AB == 0){
 			return std::numeric_limits<double>::max();
@@ -35,22 +34,22 @@ struct targetFunc_AB{
 
 	double pA;
 	double pB;
-	boost::math::beta_distribution<double> beta_dist_AB;
-	boost::math::beta_distribution<double> beta_dist_AnotB;
+	double cdf_AB;
+	double cdf_AnotB; 
+	double a1,b1,a2,b2;
 };
 
 struct targetFunc_AnotB{
 
-	targetFunc_AnotB(double pA_, double pB_, double a1, double b1, double a2, double b2):
-	pA(pA_), pB(pB_), beta_dist_AB(boost::math::beta_distribution<double>(a1, b1)),
-	beta_dist_AnotB(boost::math::beta_distribution<double>(a2,b2)){}
+	targetFunc_AnotB(double pA_, double pB_, double a1_, double b1_, double a2_, double b2_):
+	pA(pA_), pB(pB_),a1(a1_), b1(b1_),a2(a2_), b2(b2_) {}
 
 	double operator()(double const& z_AnotB){
 		if (z_AnotB < 0 || z_AnotB> 1 || (pA-z_AnotB*(1-pB))/pB < 0 || (pA-z_AnotB*(1-pB))/pB > 1 ){
 			return std::numeric_limits<double>::max();
 		}
-		double cdf_AnotB = boost::math::cdf(beta_dist_AnotB,z_AnotB);
-		double  cdf_AB = boost::math::cdf(beta_dist_AB, (pA-z_AnotB*(1-pB))/pB);
+		cdf_AB = boost::math::ibetac(a1,b1, (pA-z_AnotB*(1-pB))/pB);
+		cdf_AnotB = boost::math::ibetac(a2,b2, z_AnotB);
 		if(cdf_AnotB == 0 || cdf_AB == 0){
 			return std::numeric_limits<double>::max();
 		}
@@ -59,31 +58,18 @@ struct targetFunc_AnotB{
 
 	double pA;
 	double pB;
-	boost::math::beta_distribution<double> beta_dist_AB;
-	boost::math::beta_distribution<double> beta_dist_AnotB;
+	double cdf_AB;
+	double cdf_AnotB;
+	double a1,b1,a2,b2;
 };
 
 double partialEstimate(double pA, double pB,  double k_AB, double k_AnotB, double m_B, double m_notB ){
 
-	double zAB_lower;
-	double zAB_upper;
-	double zAnotB_lower;
-	double zAnotB_upper;
-
-	if(m_notB > 0){
-		zAB_lower = std::max<double>((pA-(k_AnotB+1)*(1-pB)/m_notB)/pB,0);
-		zAB_upper = std::min<double>((pA-(k_AnotB-1)*(1-pB)/m_notB)/pB,1);
-	}else{
-		zAB_lower = std::max<double>((pA-(1-pB))/pB,0);
-		zAB_upper = std::min<double>(pA/pB,1);
-	}
-	if(m_B > 0){
-		zAnotB_lower = std::max<double>((pA-(k_AB+1)*pB/m_B)/(1-pB),0);
-		zAnotB_upper = std::min<double>((pA-(k_AB-1)*pB/m_B)/(1-pB),1);
-	}else{
-		zAnotB_lower = std::max<double>((pA-pB)/(1-pB),0);
-		zAnotB_upper = std::min<double>(pA/(1-pB),1);
-	}
+	double zAB_lower = std::max<double>((k_AB-1)/m_B,0);
+	double zAB_upper = std::min<double>((k_AB+1)/m_B,1);
+	double zAnotB_lower = std::max<double>((k_AnotB-1)/m_notB,0);
+	double zAnotB_upper = std::min<double>((k_AnotB+1)/m_notB,1);
+	
 
 	auto getShapeParam = [](double k, double m) 
 	{ 
@@ -99,10 +85,10 @@ double partialEstimate(double pA, double pB,  double k_AB, double k_AnotB, doubl
 	std::tie(a1,b1) = getShapeParam(k_AB, m_B);
 	std::tie(a2,b2) = getShapeParam(k_AnotB, m_notB);
 
-	int bits = std::numeric_limits<double>::digits;
-	// uncomment the following to limit number of iterations in Brent's method
-   	// const boost::uintmax_t maxit = 100;
-   	// boost::uintmax_t it = maxit;
+	int bits = 24;
+   	const boost::uintmax_t maxit = 50;
+   	boost::uintmax_t it = maxit;
+   	
 	if(zAB_upper-zAB_lower < zAnotB_upper-zAnotB_lower){
 		targetFunc_AB targetFunc = targetFunc_AB(pA, pB, a1, b1, a2, b2);
 		std::pair<double,double> res = boost::math::tools::brent_find_minima(targetFunc, zAB_lower,zAB_upper, bits);
