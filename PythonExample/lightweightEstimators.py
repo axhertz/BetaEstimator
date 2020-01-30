@@ -53,6 +53,6 @@ if __name__ == "__main__":
 		query_string = line.split(" ")
 		avi_est, ebo_est, minsel_est, samplePess_est, sampleOpt_est = getBasicEstimate(query_string, df_sample)
 		print('{:<15}  {:<15}  {:<20}  {:<20}  {:<20}  {:<0}'.format("query num: "+ str(num), "AVI: "+ str(int(avi_est)), "ExpBackoff: "+ str(int(ebo_est)),\
-			 "Min Sel: "+ str(int(minsel_est)), "Pessimistic: "+ str(int(samplePess_est)),"Optimistic: "+ str(int(sampleOpt_est))))
+			 "Min Sel: "+ str(int(minsel_est)), "Optimistic: "+ str(int(samplePess_est)),"Pessimistic: "+ str(int(sampleOpt_est))))
 
 	query_file.close()
