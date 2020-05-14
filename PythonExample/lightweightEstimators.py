@@ -35,10 +35,10 @@ def getBasicEstimate(query_part,df_sample):
 	avi_est = avi*table_size
 	ebo_est = ebo*table_size
 	minsel_est = minsel*table_size
-	sampleOpt_est =  table_size/m
-	samplePess_est =  1
+	samplePess_est =  table_size/m
+	sampleOpt_est =  1
 
-	return avi_est, ebo_est, minsel_est, samplePess_est, sampleOpt_est
+	return avi_est, ebo_est, minsel_est, sampleOpt_est, samplePess_est
 
 
 if __name__ == "__main__":
@@ -51,8 +51,8 @@ if __name__ == "__main__":
 
 	for num,line in enumerate(query_file.readlines()):
 		query_string = line.split(" ")
-		avi_est, ebo_est, minsel_est, samplePess_est, sampleOpt_est = getBasicEstimate(query_string, df_sample)
+		avi_est, ebo_est, minsel_est, sampleOpt_est, samplePess_est = getBasicEstimate(query_string, df_sample)
 		print('{:<15}  {:<15}  {:<20}  {:<20}  {:<20}  {:<0}'.format("query num: "+ str(num), "AVI: "+ str(int(avi_est)), "ExpBackoff: "+ str(int(ebo_est)),\
-			 "Min Sel: "+ str(int(minsel_est)), "Optimistic: "+ str(int(samplePess_est)),"Pessimistic: "+ str(int(sampleOpt_est))))
+			 "Min Sel: "+ str(int(minsel_est)), "Optimistic: "+ str(int(sampleOpt_est)),"Pessimistic: "+ str(int(samplePess_est))))
 
 	query_file.close()
