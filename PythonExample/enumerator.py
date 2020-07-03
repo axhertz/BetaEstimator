@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import sys
 
 
 def getIaEnumeration(query_part,result_set):
@@ -80,7 +81,7 @@ def getGreedyEnumeration(query_part,result_set):
 			all_predicates.append(conj_part)
 
 	for i in range(7):
-		best_cost = 7*1500000000
+		best_cost = sys.maxsize
 		for position in range(len(all_predicates)):
 			if visited_preds[position] != 0 : continue
 			current_cost = len(result_set.loc[all_predicates[position]])
