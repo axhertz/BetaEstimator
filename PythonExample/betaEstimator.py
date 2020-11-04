@@ -140,9 +140,9 @@ def getSelectivityEstimate(enumeratedPreds, query_part, df_sample, query_num):
 		elif (len(visitedPreds)== 0): # case first predicate gives null vector
 			selectivityEstimate = math.log(2)/(2*sampleSize)
 		else: # use estimator
-			if(np.count_nonzero(bvInput) == 0): #take care of null vector (otherwise no solution)
+			if(np.count_nonzero(bvInput) == 0):
 				pB = math.log(2)/(2*sampleSize)
-			elif(np.count_nonzero(bvInput) == len(bvInput)): # take care of unit vector (otherwise no solution)
+			elif(np.count_nonzero(bvInput) == len(bvInput)):
 				pB = 1 - math.log(2)/(2*sampleSize)
 			if not np.count_nonzero(bvResult) or not np.count_nonzero(bvInput) or np.count_nonzero(bvInput) == sampleSize: # use AVI
 				selectivityEstimate = selectivityEstimate*pB 
