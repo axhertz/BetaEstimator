@@ -4,7 +4,7 @@ import pandas
 import numpy as np
 
 sample_size = "1per" # 1k
-enumeration_policy = "Greedy" # Dp, Desc
+enumeration_policy = "Greedy" # Dp, Ia
 table_size = 581012
 
 if __name__ == "__main__":
@@ -25,6 +25,5 @@ if __name__ == "__main__":
 		# use pre-computed enumeration or call enumerator.strategy(query_string, df_sample)
 		plan = plan_all_queries[query_num] 
 		selectivity, qualifying_tuples =  betaEstimator.getSelectivityEstimate(plan, query_string, df_sample, query_num)
-		print('{:<20}  {:<35}  {:<0}'.format("query num: "+ str(query_num+1), "estimated cardinality: {0:.3f}".format(selectivity*table_size),\
+		print('{:<20}  {:<35}  {:<0}'.format("query num: "+ str(query_num+1), "estimated cardinality: {0:.3f}".format(max(1,selectivity*table_size)),\
 			 "qualifying tuples: "+str(qualifying_tuples)))
-
