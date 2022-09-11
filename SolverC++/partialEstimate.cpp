@@ -71,7 +71,7 @@ double partialEstimate(double pA, double pB,  double k_AB, double k_AnotB, doubl
 	double zAnotB_upper = std::min<double>((k_AnotB+1)/m_notB,1);
 	
 
-	auto getShapeParam = [](double k, double m) 
+	auto getShapeParam = [](double k, double m) // Eqn. 9
 	{ 
 		if (k > 0){
 			return std::make_tuple(k+1.0/3.0, m-k+1.0/3.0);
