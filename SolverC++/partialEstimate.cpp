@@ -74,7 +74,7 @@ double partialEstimate(double pA, double pB,  double k_AB, double k_AnotB, doubl
 	auto getShapeParam = [](double k, double m) 
 	{ 
 		if (k > 0){
-			return std::make_tuple(k+0.634, m-k+0.634);
+			return std::make_tuple(k+1/3, m-k+1/3);
 		}else if(m > 0){
 			return std::make_tuple(0.634, m);
 		}
